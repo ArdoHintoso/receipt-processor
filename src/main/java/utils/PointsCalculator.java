@@ -27,6 +27,8 @@ public class PointsCalculator {
         // RULE #1: "One point for every alphanumeric character in the retailer name"
         pointsFromRetailerName += name.replaceAll("\\s+", "").length();
 
+        System.out.println(pointsFromRetailerName);
+
         return pointsFromRetailerName;
     }
 
@@ -45,6 +47,8 @@ public class PointsCalculator {
             pointsFromTotalPrice += 25;
         }
 
+        System.out.println(pointsFromTotalPrice);;
+
         return pointsFromTotalPrice;
     }
 
@@ -56,15 +60,16 @@ public class PointsCalculator {
         // RULE #4: "5 points for every two items on the receipt"
         pointsFromItems += (items.size() / 2) * 5;
 
-        StringMethods strMethods = new StringMethods();
-
         // RULE #5: "If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned."
         for (Receipt.Item item: items) {
-            int lenOfCurrentItem = strMethods.trimAndReturnLength(item.shortDescription());
+            int lenOfCurrentItem = StringManipulationMethods.removeExtraSpacesAndReturnLength(item.shortDescription()); // alternatively, we can item.shortDescription().trim().length() if we allow extra spaces between valid substrings
+
             if (lenOfCurrentItem % 3 == 0) {
-                pointsFromItems += (int) Math.ceil(Double.parseDouble(item.price()) * 0.2);
+                pointsFromItems += Math.ceil(Double.parseDouble(item.price()) * 0.2);
             }
         }
+
+        System.out.println(pointsFromItems);
 
         return pointsFromItems;
     }
@@ -78,6 +83,8 @@ public class PointsCalculator {
         if (date.getDayOfMonth() % 2 == 1) {
             pointsFromDate += 6;
         }
+
+        System.out.println(pointsFromDate);
 
         return pointsFromDate;
     }
@@ -93,6 +100,8 @@ public class PointsCalculator {
         if (time.isAfter(start) && time.isBefore(end)) {
             pointsFromTime += 10;
         }
+
+        System.out.println(pointsFromTime);
 
         return pointsFromTime;
     }

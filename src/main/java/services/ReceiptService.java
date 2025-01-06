@@ -2,7 +2,7 @@ package services;
 
 import exceptions.ApiException;
 import models.Receipt;
-import models.ReceiptPoints;
+import models.ReceiptPointsResponse;
 import utils.PointsCalculator;
 
 import java.util.Map;
@@ -30,21 +30,21 @@ public class ReceiptService {
         return id;
     }
 
-    public ReceiptPoints getPoints(String id) {
+    public ReceiptPointsResponse getPoints(String id) {
         if (!receipts.containsKey(id)) {
-            throw new ApiException("Receipt does not exist", 404);
+            throw new ApiException("No receipt found for that ID.", 404);
         }
 
-        return new ReceiptPoints(id, points.get(id));
+        return new ReceiptPointsResponse(points.get(id));
     }
 
     private void validateReceipt(Receipt receipt) {
         if (receipt == null) {
-            throw new ApiException("Receipt data is required", 400);
+            throw new ApiException("The receipt is invalid.", 400);
         }
 
         if (receipt.retailer() == null || receipt.retailer().trim().isEmpty()) {
-            throw new ApiException("Retailer is required", 400);
+            throw new ApiException("The receipt is invalid.", 400);
         }
     }
 }

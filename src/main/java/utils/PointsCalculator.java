@@ -1,5 +1,6 @@
 package utils;
 
+import constants.RewardsRules;
 import models.Receipt;
 
 import java.time.LocalDate;
@@ -20,56 +21,50 @@ public class PointsCalculator {
     }
 
     private int getPointsFromRetailer(String name) {
-        if (name == null || name.length() == 0) return 0;
+        if (name == null || name.isEmpty()) return 0;
 
         int pointsFromRetailerName = 0;
 
         // RULE #1: "One point for every alphanumeric character in the retailer name"
-        pointsFromRetailerName += name.replaceAll("\\s+", "").length();
-
-        System.out.println(pointsFromRetailerName);
+        pointsFromRetailerName += name.replaceAll("\\s+", "").length() * RewardsRules.POINTS_PER_ALPHANUMERIC;
 
         return pointsFromRetailerName;
     }
 
     private int getPointsFromTotal(double price) {
-        if (price < 0) return 0;
+        if (price < RewardsRules.MIN_TOTAL) return 0;
 
         int pointsFromTotalPrice = 0;
 
         // RULE #2: "50 points if the total is a round dollar amount with no cents"
         if (price == Math.floor(price)) {
-            pointsFromTotalPrice += 50;
+            pointsFromTotalPrice += RewardsRules.POINTS_FOR_ROUND_DOLLAR;
         }
 
         // RULE #3: "25 points if the total is a multiple of 0.25"
         if (price % 0.25 == 0) {
-            pointsFromTotalPrice += 25;
+            pointsFromTotalPrice += RewardsRules.POINTS_FOR_MULTIPLE_OF_25_CENTS;
         }
-
-        System.out.println(pointsFromTotalPrice);;
 
         return pointsFromTotalPrice;
     }
 
     private int getPointsFromListOfItems(List<Receipt.Item> items) {
-        if (items == null || items.size() == 0) return 0;
+        if (items == null || items.size() < RewardsRules.MIN_ITEMS) return 0;
 
         int pointsFromItems = 0;
 
         // RULE #4: "5 points for every two items on the receipt"
-        pointsFromItems += (items.size() / 2) * 5;
+        pointsFromItems += (items.size() / 2) * RewardsRules.POINTS_PER_TWO_ITEMS;
 
         // RULE #5: "If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned."
         for (Receipt.Item item: items) {
             int lenOfCurrentItem = StringManipulationMethods.removeExtraSpacesAndReturnLength(item.shortDescription()); // alternatively, we can item.shortDescription().trim().length() if we allow extra spaces between valid substrings
 
             if (lenOfCurrentItem % 3 == 0) {
-                pointsFromItems += Math.ceil(Double.parseDouble(item.price()) * 0.2);
+                pointsFromItems += (int) Math.ceil(Double.parseDouble(item.price()) * RewardsRules.MULTIPLY_IF_TRIMMED_LENGTH_IS_MULTIPLE_OF_3);
             }
         }
-
-        System.out.println(pointsFromItems);
 
         return pointsFromItems;
     }
@@ -84,8 +79,6 @@ public class PointsCalculator {
             pointsFromDate += 6;
         }
 
-        System.out.println(pointsFromDate);
-
         return pointsFromDate;
     }
 
@@ -95,13 +88,12 @@ public class PointsCalculator {
         int pointsFromTime = 0;
 
         // RULE #8: "10 points if the time of purchase is after 2:00pm and before 4:00pm"
-        LocalTime start = LocalTime.of(14, 0), end = LocalTime.of(16,0);
+        LocalTime start = LocalTime.of(RewardsRules.PURCHASE_TIME_START_HOUR, RewardsRules.PURCHASE_TIME_START_MIN);
+        LocalTime end = LocalTime.of(RewardsRules.PURCHASE_TIME_END_HOUR, RewardsRules.PURCHASE_TIME_END_MIN);
 
         if (time.isAfter(start) && time.isBefore(end)) {
             pointsFromTime += 10;
         }
-
-        System.out.println(pointsFromTime);
 
         return pointsFromTime;
     }

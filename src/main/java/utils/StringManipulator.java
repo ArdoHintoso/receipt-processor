@@ -1,6 +1,6 @@
 package utils;
 
-class StringManipulationMethods {
+class StringManipulator {
     public static int removeExtraSpacesAndReturnLength(String input) {
         if (input == null || input.length() == 0) return 0;
 

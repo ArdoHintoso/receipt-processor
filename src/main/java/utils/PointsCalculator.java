@@ -60,7 +60,7 @@ public class PointsCalculator {
 
         // RULE #5: "If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned."
         for (ReceiptItem item: items) {
-            int lenOfCurrentItem = StringManipulationMethods.removeExtraSpacesAndReturnLength(item.shortDescription()); // alternatively, we can item.shortDescription().trim().length() if we allow extra spaces between valid substrings
+            int lenOfCurrentItem = StringManipulator.removeExtraSpacesAndReturnLength(item.shortDescription()); // alternatively, we can item.shortDescription().trim().length() if we allow extra spaces between valid substrings
 
             if (lenOfCurrentItem % 3 == 0) {
                 pointsFromItems += (int) Math.ceil(item.price() * RewardsRules.MULTIPLY_IF_TRIMMED_LENGTH_IS_MULTIPLE_OF_3);

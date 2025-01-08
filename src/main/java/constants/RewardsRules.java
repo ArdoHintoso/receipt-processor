@@ -1,5 +1,7 @@
 package constants;
 
+import java.time.format.DateTimeFormatter;
+
 public class RewardsRules {
     public static final int MIN_ITEMS = 1;
     public static final double MIN_TOTAL = 0.0;
@@ -17,6 +19,11 @@ public class RewardsRules {
 
     public static final int PURCHASE_TIME_END_MIN = 0;
 
+    // Time constants
     public static final String TIME_FORMAT = "HH:mm";
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
+
+    // Date Constants
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
 }

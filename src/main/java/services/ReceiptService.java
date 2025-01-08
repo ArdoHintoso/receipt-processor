@@ -1,8 +1,11 @@
 package services;
 
+import dto.ReceiptDTO;
 import exceptions.ApiException;
 import domain.Receipt;
-import dto.PointsResponseDTO;
+import middleware.ReceiptMapper;
+import org.slf4j.Logger;
+import utils.LoggerUtil;
 import utils.PointsCalculator;
 
 import java.util.Map;
@@ -10,22 +13,34 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ReceiptService {
+    private static final Logger logger = LoggerUtil.getLogger(ReceiptService.class);
     private final Map<String, Receipt> receipts = new ConcurrentHashMap<>();
     private final Map<String, Integer> rewards = new ConcurrentHashMap<>();
     private final PointsCalculator pointsCalculator;
+    private final ReceiptMapper mapper;
 
-    public ReceiptService(PointsCalculator pointsCalculator) {
+    public ReceiptService(PointsCalculator pointsCalculator, ReceiptMapper mapper) {
         this.pointsCalculator = pointsCalculator;
+        this.mapper = mapper;
     }
 
-    public String processReceipt(Receipt receipt) {
-        validateReceipt(receipt);
+    public String processReceipt(ReceiptDTO receiptDTO) {
+        logger.info("Processing new receipt...");
+        logger.debug("Receipt data: {}", receiptDTO);
+
+        validateReceipt(receiptDTO);
+        logger.debug("DTO validation passed");
 
         String id = UUID.randomUUID().toString();
-        receipts.put(id, receipt);
 
-        int calculatedPoints = pointsCalculator.calculatePoints(receipt);
+        Receipt receiptInProcess = mapper.toReceipt(receiptDTO);
+
+        int calculatedPoints = pointsCalculator.calculatePoints(receiptInProcess);
+
+        Receipt processedReceipt = new Receipt(id, receiptInProcess.retailer(), receiptInProcess.purchaseDate(), receiptInProcess.purchaseTime(), receiptInProcess.items(), receiptInProcess.total(), calculatedPoints);
+
         rewards.put(id, calculatedPoints);
+        receipts.put(id, processedReceipt);
 
         return id;
     }
@@ -38,7 +53,7 @@ public class ReceiptService {
         return rewards.get(id);
     }
 
-    private void validateReceipt(Receipt receipt) {
+    private void validateReceipt(ReceiptDTO receipt) {
         if (receipt == null) {
             throw new ApiException("The receipt is invalid.", 400);
         }

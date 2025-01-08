@@ -1,7 +1,8 @@
 package utils;
 
 import constants.RewardsRules;
-import models.Receipt;
+import domain.Receipt;
+import domain.ReceiptItem;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,7 +13,7 @@ public class PointsCalculator {
         int sumOfPoints = 0;
 
         sumOfPoints += getPointsFromRetailer(receipt.retailer()); // for RULE #1
-        sumOfPoints += getPointsFromTotal(Double.parseDouble(receipt.total())); // for RULES #2 and 3
+        sumOfPoints += getPointsFromTotal(receipt.total()); // for RULES #2 and 3
         sumOfPoints += getPointsFromListOfItems(receipt.items()); // for RULES #4 and 5
         sumOfPoints += getPointsFromDateOfPurchase(receipt.purchaseDate()); // for RULE #7
         sumOfPoints += getPointsFromTimeOfPurchase(receipt.purchaseTime()); // for RULE #8
@@ -49,7 +50,7 @@ public class PointsCalculator {
         return pointsFromTotalPrice;
     }
 
-    private int getPointsFromListOfItems(List<Receipt.Item> items) {
+    private int getPointsFromListOfItems(List<ReceiptItem> items) {
         if (items == null || items.size() < RewardsRules.MIN_ITEMS) return 0;
 
         int pointsFromItems = 0;
@@ -58,11 +59,11 @@ public class PointsCalculator {
         pointsFromItems += (items.size() / 2) * RewardsRules.POINTS_PER_TWO_ITEMS;
 
         // RULE #5: "If the trimmed length of the item description is a multiple of 3, multiply the price by 0.2 and round up to the nearest integer. The result is the number of points earned."
-        for (Receipt.Item item: items) {
+        for (ReceiptItem item: items) {
             int lenOfCurrentItem = StringManipulationMethods.removeExtraSpacesAndReturnLength(item.shortDescription()); // alternatively, we can item.shortDescription().trim().length() if we allow extra spaces between valid substrings
 
             if (lenOfCurrentItem % 3 == 0) {
-                pointsFromItems += (int) Math.ceil(Double.parseDouble(item.price()) * RewardsRules.MULTIPLY_IF_TRIMMED_LENGTH_IS_MULTIPLE_OF_3);
+                pointsFromItems += (int) Math.ceil(item.price() * RewardsRules.MULTIPLY_IF_TRIMMED_LENGTH_IS_MULTIPLE_OF_3);
             }
         }
 

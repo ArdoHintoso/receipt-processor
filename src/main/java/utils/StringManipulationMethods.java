@@ -1,7 +1,5 @@
 package utils;
 
-import java.util.Arrays;
-
 class StringManipulationMethods {
     public static int removeExtraSpacesAndReturnLength(String input) {
         if (input == null || input.length() == 0) return 0;
@@ -23,9 +21,6 @@ class StringManipulationMethods {
         }
 
         if (arr[slow - 1] == ' ') slow--;
-
-        String removedExtraSpaces = new String(Arrays.copyOfRange(arr, 0, slow));
-        System.out.println("len: " + slow + " " + removedExtraSpaces);
 
         return slow;
     }

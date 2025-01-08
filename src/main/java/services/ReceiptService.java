@@ -1,8 +1,8 @@
 package services;
 
 import exceptions.ApiException;
-import models.Receipt;
-import models.ReceiptPointsResponse;
+import domain.Receipt;
+import dto.PointsResponseDTO;
 import utils.PointsCalculator;
 
 import java.util.Map;
@@ -11,11 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReceiptService {
     private final Map<String, Receipt> receipts = new ConcurrentHashMap<>();
-    private final Map<String, Integer> points = new ConcurrentHashMap<>();
+    private final Map<String, Integer> rewards = new ConcurrentHashMap<>();
     private final PointsCalculator pointsCalculator;
 
-    public ReceiptService() {
-        this.pointsCalculator = new PointsCalculator();
+    public ReceiptService(PointsCalculator pointsCalculator) {
+        this.pointsCalculator = pointsCalculator;
     }
 
     public String processReceipt(Receipt receipt) {
@@ -25,17 +25,17 @@ public class ReceiptService {
         receipts.put(id, receipt);
 
         int calculatedPoints = pointsCalculator.calculatePoints(receipt);
-        points.put(id, calculatedPoints);
+        rewards.put(id, calculatedPoints);
 
         return id;
     }
 
-    public ReceiptPointsResponse getPoints(String id) {
+    public int getPoints(String id) {
         if (!receipts.containsKey(id)) {
             throw new ApiException("No receipt found for that ID.", 404);
         }
 
-        return new ReceiptPointsResponse(points.get(id));
+        return rewards.get(id);
     }
 
     private void validateReceipt(Receipt receipt) {

@@ -1,10 +1,10 @@
 package controllers;
 
+import dto.IdResponseDTO;
+import dto.PointsResponseDTO;
 import io.javalin.http.Context;
-import models.Receipt;
+import domain.Receipt;
 import services.ReceiptService;
-
-import java.util.Map;
 
 public class ReceiptController {
     private final ReceiptService receiptService;
@@ -16,11 +16,12 @@ public class ReceiptController {
     public void processReceipt(Context ctx) {
         Receipt receipt = ctx.bodyAsClass(Receipt.class);
         String id = receiptService.processReceipt(receipt);
-        ctx.status(200).json(Map.of("id", id));
+        ctx.status(200).json(new IdResponseDTO(id));
     };
 
     public void getPoints(Context ctx) {
         String id = ctx.pathParam("id");
-        ctx.status(200).json(receiptService.getPoints(id));
+        int points = receiptService.getPoints(id);
+        ctx.status(200).json(new PointsResponseDTO(points));
     };
 }

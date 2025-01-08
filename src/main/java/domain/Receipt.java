@@ -1,18 +1,16 @@
-package models;
+package domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 public record Receipt(
+        String id,
         String retailer,
         LocalDate purchaseDate,
         LocalTime purchaseTime,
-        List<Item> items,
-        String total
+        List<ReceiptItem> items,
+        double total,
+        int points
 ) {
-    public record Item(
-            String shortDescription,
-            String price
-    ) {}
 }

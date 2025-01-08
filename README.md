@@ -18,8 +18,8 @@ prioritizing readability, maintainability, and extensibility for further develop
 (3) Since the submission wasn't developed in the Go programming language --> dockerized setup is included to run the code (with detailed instructions provided as necessary)
 
 ### 4.2 MVP Definition
-Simple receipt processor API with two endpoints, namely a (1) POST request that processes a given receipt in JSON format and (2) GET request that looks up the 
-corresponding point(s) rewarded, after processing the receipt, from the generated UUID.
+Simple receipt processor API with two endpoints, namely a (1) POST request that takes a given receipt in JSON format and generates a UUID for the processed receipt
+and (2) GET request that looks up the corresponding point(s) rewarded from the processed receipt through its UUID.
 
 ```
 Project Structure 
@@ -42,10 +42,10 @@ src/main/java
 
 ### 4.3 Core Components
 
-- [ ] **Validation** of request input to ensure that receipts are valid and meets business specifications  
-- [ ] **Testing** to increase the accuracy of application results
+- [ ] **Validation** of request input to ensure validity and accuracy   
+- [ ] **Testing** to increase the reliability of application results
 - [ ] **Error Handling & Logging** for more observability and transparency to improve debugging experience
-- [ ] **Documentation** for better maintainability and usability 
+- [ ] **Documentation** for better maintainability and usability
  
 ## **5. Future Roadmap** 
 If warranted by development resources while providing additional value to internal/external parties, the following nice-to-have 
@@ -53,7 +53,8 @@ features would be considered to make the current implementation more robust and 
 
 - **Security Enhancements**: 
   - Rate limiter to avoid abuse of API
-  - Authentication/authorization Middleware
+  - Authentication/authorization Middleware 
+  - Prevent duplicate processing of the same receipt
 - **Performance Optimizations**: 
   - Data persistence and/or caching layer 
   - Circuit breakers for external services

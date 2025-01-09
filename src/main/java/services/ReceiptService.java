@@ -6,24 +6,21 @@ import domain.Receipt;
 import middleware.ReceiptMapper;
 import middleware.ReceiptValidator;
 import org.slf4j.Logger;
+import repository.ReceiptRepository;
 import utils.LoggerUtil;
 import utils.PointsCalculator;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ReceiptService {
     private static final Logger logger = LoggerUtil.getLogger(ReceiptService.class);
-    private final Map<String, Receipt> receipts = new ConcurrentHashMap<>();
-    private final Map<String, Integer> rewards = new ConcurrentHashMap<>();
+    private final ReceiptRepository repository;
     private final ReceiptValidator validator;
-    private final PointsCalculator pointsCalculator;
     private final ReceiptMapper mapper;
 
-    public ReceiptService(ReceiptValidator validator, PointsCalculator pointsCalculator, ReceiptMapper mapper) {
+    public ReceiptService(ReceiptRepository repository, ReceiptValidator validator, ReceiptMapper mapper) {
+        this.repository = repository;
         this.validator = validator;
-        this.pointsCalculator = pointsCalculator;
         this.mapper = mapper;
     }
 
@@ -34,25 +31,30 @@ public class ReceiptService {
         validator.validateReceiptDTO(receiptDTO);
         logger.debug("DTO validation passed");
 
-        String id = UUID.randomUUID().toString();
-
         Receipt receiptInProcess = mapper.toReceipt(receiptDTO);
 
-        int calculatedPoints = pointsCalculator.calculatePoints(receiptInProcess);
+        String id = UUID.randomUUID().toString();
+        int calculatedPoints = PointsCalculator.calculatePoints(receiptInProcess);
 
         Receipt processedReceipt = new Receipt(id, receiptInProcess.retailer(), receiptInProcess.purchaseDate(), receiptInProcess.purchaseTime(), receiptInProcess.items(), receiptInProcess.total(), calculatedPoints);
 
-        rewards.put(id, calculatedPoints);
-        receipts.put(id, processedReceipt);
+        repository.save(id, processedReceipt);
+
+        logger.info("Receipt processed successfully with ID: {} and points: {}", id, calculatedPoints);
 
         return id;
     }
 
     public int getPoints(String id) {
-        if (!receipts.containsKey(id)) {
-            throw new ApiException("No receipt found for that ID.", 404);
-        }
+        logger.info("Retrieving points for receipt ID: {}", id);
 
-        return rewards.get(id);
+        Receipt retrieved = repository.findById(id).orElseThrow(() -> {
+            logger.error("Receipt not found for ID: {}", id);
+            return new ApiException("No receipt found for that ID.", 404);
+        });
+
+        logger.info("{} points was rewarded for receipt ID: {}", retrieved.points(), id);
+
+        return retrieved.points();
     }
 }

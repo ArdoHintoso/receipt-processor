@@ -1,17 +1,18 @@
 import controllers.ReceiptController;
 import exceptions.ApiException;
+import exceptions.ValidationException;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import middleware.ReceiptMapper;
 import middleware.ReceiptValidator;
-import utils.PointsCalculator;
+import repository.ReceiptRepository;
 import services.ReceiptService;
 
 import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        ReceiptController receiptController = new ReceiptController(new ReceiptService(new ReceiptValidator(), new PointsCalculator(), new ReceiptMapper()));
+        ReceiptController receiptController = new ReceiptController(new ReceiptService(new ReceiptRepository(), new ReceiptValidator(), new ReceiptMapper()));
 
         Javalin app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson());
@@ -26,6 +27,10 @@ public class Main {
         app.get("/receipts/{id}/points", receiptController::getPoints);
 
         app.exception(ApiException.class, (e, ctx) -> {
+            ctx.status(e.getStatusCode()).json(Map.of("error", e.getMessage()));
+        });
+
+        app.exception(ValidationException.class, (e, ctx) -> {
             ctx.status(e.getStatusCode()).json(Map.of("error", e.getMessage()));
         });
 

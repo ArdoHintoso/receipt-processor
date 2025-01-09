@@ -23,7 +23,7 @@ public class ReceiptController {
         String id = receiptService.processReceipt(receiptRequest);
         ctx.status(200).json(new IdResponseDTO(id));
 
-        logger.info("Successfully processed receipt with ID: {}", id);
+        logger.info("ID: {} has been fully processed", id);
     };
 
     public void getPoints(Context ctx) {

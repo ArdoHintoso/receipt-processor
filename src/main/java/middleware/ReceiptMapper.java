@@ -35,7 +35,7 @@ public class ReceiptMapper {
             return receipt;
         } catch (Exception e) {
             logger.error("Failed to map DTO to domain object", e);
-            throw new ValidationException("Invalid data format: " + e.getMessage());
+            throw new ValidationException("Invalid data format: " + e.getMessage(), 403);
         }
     }
 

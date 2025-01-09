@@ -3,6 +3,8 @@ package middleware;
 import constants.RewardsRules;
 import dto.ReceiptDTO;
 import exceptions.ValidationException;
+import org.slf4j.Logger;
+import utils.LoggerUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReceiptValidator {
+    private static final Logger logger = LoggerUtil.getLogger(ReceiptValidator.class);
     public void validateReceiptDTO(ReceiptDTO dto) {
         List<String> errors = new ArrayList<>();
 
@@ -18,7 +21,8 @@ public class ReceiptValidator {
         if (errors.isEmpty()) validateTotalAndItems(dto, errors);
 
         if (!errors.isEmpty()) {
-            throw new ValidationException("Validation failed: " + String.join(", ", errors));
+            logger.error("Validation failed. Your receipt is invalid, please try again.");
+            throw new ValidationException("Validation failed: " + String.join(", ", errors), 403);
         }
     }
 

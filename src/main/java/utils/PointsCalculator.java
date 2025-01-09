@@ -9,7 +9,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class PointsCalculator {
-    public int calculatePoints(Receipt receipt) {
+    public static int calculatePoints(Receipt receipt) {
         int sumOfPoints = 0;
 
         sumOfPoints += getPointsFromRetailer(receipt.retailer()); // for RULE #1
@@ -21,7 +21,7 @@ public class PointsCalculator {
         return sumOfPoints;
     }
 
-    private int getPointsFromRetailer(String name) {
+    private static int getPointsFromRetailer(String name) {
         if (name == null || name.isEmpty()) return 0;
 
         int pointsFromRetailerName = 0;
@@ -32,7 +32,7 @@ public class PointsCalculator {
         return pointsFromRetailerName;
     }
 
-    private int getPointsFromTotal(double price) {
+    private static int getPointsFromTotal(double price) {
         if (price < RewardsRules.MIN_TOTAL) return 0;
 
         int pointsFromTotalPrice = 0;
@@ -50,7 +50,7 @@ public class PointsCalculator {
         return pointsFromTotalPrice;
     }
 
-    private int getPointsFromListOfItems(List<ReceiptItem> items) {
+    private static int getPointsFromListOfItems(List<ReceiptItem> items) {
         if (items == null || items.size() < RewardsRules.MIN_ITEMS) return 0;
 
         int pointsFromItems = 0;
@@ -70,7 +70,7 @@ public class PointsCalculator {
         return pointsFromItems;
     }
 
-    private int getPointsFromDateOfPurchase(LocalDate date) {
+    private static int getPointsFromDateOfPurchase(LocalDate date) {
         if (date == null) return 0;
 
         int pointsFromDate = 0;
@@ -83,7 +83,7 @@ public class PointsCalculator {
         return pointsFromDate;
     }
 
-    private int getPointsFromTimeOfPurchase(LocalTime time) {
+    private static int getPointsFromTimeOfPurchase(LocalTime time) {
         if (time == null) return 0;
 
         int pointsFromTime = 0;

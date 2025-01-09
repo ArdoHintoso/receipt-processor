@@ -16,9 +16,9 @@ public class ReceiptValidator {
     public void validateReceiptDTO(ReceiptDTO dto) {
         List<String> errors = new ArrayList<>();
 
-        validateRetailer(dto, errors); // validate first, the rest will be checked if list of errors is still empty
-        if (errors.isEmpty()) validateDateTime(dto, errors);
-        if (errors.isEmpty()) validateTotalAndItems(dto, errors);
+        validateRetailer(dto, errors);
+        validateDateTime(dto, errors);
+        validateTotalAndItems(dto, errors);
 
         if (!errors.isEmpty()) {
             logger.error("Validation failed. Your receipt is invalid, please try again.");
@@ -29,6 +29,11 @@ public class ReceiptValidator {
     private void validateRetailer(ReceiptDTO dto, List<String> errors) {
         if (dto.retailer() == null || dto.retailer().trim().isEmpty()) {
             errors.add("Retailer name is required");
+            return ;
+        }
+
+        if (!dto.retailer().matches("^[\\w\\s&'-]+$")) {
+            errors.add("Retailer name contains invalid characters");
         }
     }
 
@@ -58,6 +63,9 @@ public class ReceiptValidator {
         if (dto.total() == null || dto.total().trim().isEmpty()) {
             errors.add("Total is required");
             return ;
+        } else if (!dto.total().matches("^\\d+\\.\\d{2}$")) {
+            errors.add("Invalid total format. Expected format: 0.00");
+            return ;
         }
 
         List<ReceiptDTO.ItemDTO> items = dto.items();
@@ -83,10 +91,14 @@ public class ReceiptValidator {
     private double validateItem(ReceiptDTO.ItemDTO item, int index, List<String> errors) {
         if (item.shortDescription() == null || item.shortDescription().trim().isEmpty()) {
             errors.add("Item " + (index + 1) + ": Short description is required");
+        } else if (!item.shortDescription().matches("^[\\w\\s&'-]+$")) {
+            errors.add("Item " + (index + 1) + ": Short description contains invalid characters");
         }
 
         if (item.price() == null || item.price().trim().isEmpty()) {
             errors.add("Item " + (index + 1) + ": Price is required");
+        } else if (!item.price().matches("^\\d+\\.\\d{2}$")) {
+            errors.add("Item " + (index + 1) + ": Invalid price format. Expected format: 0.00");
         } else {
             try {
                 double price = Double.parseDouble(item.price());

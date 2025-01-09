@@ -42,9 +42,9 @@ src/main/java
 
 ### 4.3 Core Components
 
-- [ ] **Validation** of request input to ensure validity and accuracy   
-- [ ] **Testing** to increase the reliability of application results
-- [ ] **Error Handling & Logging** for more observability and transparency to improve debugging experience
+- [x] **Validation** of request input to ensure validity and accuracy   
+- [x] **Testing** to increase the reliability of application results
+- [x] **Error Handling & Logging** for more observability and transparency to improve debugging experience
 - [ ] **Documentation** for better maintainability and usability
  
 ## **5. Future Roadmap** 

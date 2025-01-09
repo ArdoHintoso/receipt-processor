@@ -40,12 +40,8 @@ public class AppConfig {
     }
 
     private void configureExceptionHandler() {
-        app.exception(BadRequestException.class, (e, ctx) -> {
-            ctx.status(400).json(Map.of("error", e.getMessage()));
-        });
+        app.exception(BadRequestException.class, (e, ctx) -> ctx.status(400).json(Map.of("error", e.getMessage())));
 
-        app.exception(NotFoundException.class, (e, ctx) -> {
-            ctx.status(404).json(Map.of("error", e.getMessage()));
-        });
+        app.exception(NotFoundException.class, (e, ctx) -> ctx.status(404).json(Map.of("error", e.getMessage())));
     }
 }

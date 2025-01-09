@@ -50,7 +50,7 @@ public class ReceiptService {
 
         Receipt retrieved = repository.findById(id).orElseThrow(() -> {
             logger.error("Receipt not found for ID: {}", id);
-            return new NotFoundException("No receipt found for that ID.");
+            throw new NotFoundException("No receipt found for that ID.");
         });
 
         logger.info("{} points was rewarded for receipt ID: {}", retrieved.points(), id);

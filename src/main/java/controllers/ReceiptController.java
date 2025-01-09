@@ -3,6 +3,7 @@ package controllers;
 import dto.IdResponseDTO;
 import dto.PointsResponseDTO;
 import dto.ReceiptDTO;
+import io.javalin.Javalin;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import services.ReceiptService;
@@ -36,4 +37,11 @@ public class ReceiptController {
 
         logger.info("Successfully retrieved rewards for ID: {}", id);
     };
+
+    public void registerRoutes(Javalin app) {
+        app.post("/receipts/process", this::processReceipt);
+        app.get("/receipts/{id}/points", this::getPoints);
+
+        logger.info("Receipt routes registered successfully");
+    }
 }

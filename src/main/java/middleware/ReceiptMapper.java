@@ -4,7 +4,7 @@ import constants.RewardsRules;
 import domain.Receipt;
 import domain.ReceiptItem;
 import dto.ReceiptDTO;
-import exceptions.ValidationException;
+import exceptions.BadRequestException;
 import org.slf4j.Logger;
 import utils.LoggerUtil;
 
@@ -35,7 +35,7 @@ public class ReceiptMapper {
             return receipt;
         } catch (Exception e) {
             logger.error("Failed to map DTO to domain object", e);
-            throw new ValidationException("Invalid data format: " + e.getMessage(), 403);
+            throw new BadRequestException("Invalid data format: " + e.getMessage());
         }
     }
 

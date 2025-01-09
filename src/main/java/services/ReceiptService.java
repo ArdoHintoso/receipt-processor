@@ -1,8 +1,8 @@
 package services;
 
 import dto.ReceiptDTO;
-import exceptions.ApiException;
 import domain.Receipt;
+import exceptions.NotFoundException;
 import middleware.ReceiptMapper;
 import middleware.ReceiptValidator;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class ReceiptService {
 
         Receipt retrieved = repository.findById(id).orElseThrow(() -> {
             logger.error("Receipt not found for ID: {}", id);
-            return new ApiException("No receipt found for that ID.", 404);
+            return new NotFoundException("No receipt found for that ID.");
         });
 
         logger.info("{} points was rewarded for receipt ID: {}", retrieved.points(), id);

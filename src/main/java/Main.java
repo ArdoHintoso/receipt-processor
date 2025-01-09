@@ -1,39 +1,17 @@
-import controllers.ReceiptController;
-import exceptions.ApiException;
-import exceptions.ValidationException;
-import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
-import middleware.ReceiptMapper;
-import middleware.ReceiptValidator;
-import repository.ReceiptRepository;
-import services.ReceiptService;
-
-import java.util.Map;
+import config.AppConfig;
+import org.slf4j.Logger;
+import utils.LoggerUtil;
 
 public class Main {
+    private static final Logger logger = LoggerUtil.getLogger(Main.class);
+    private static final int PORT = 7070;
+
     public static void main(String[] args) {
-        ReceiptController receiptController = new ReceiptController(new ReceiptService(new ReceiptRepository(), new ReceiptValidator(), new ReceiptMapper()));
+        logger.info("Starting Fetch Rewards Receipt Processor application");
 
-        Javalin app = Javalin.create(config -> {
-            config.jsonMapper(new JavalinJackson());
-            config.bundledPlugins.enableCors(cors -> {
-                cors.addRule(it -> {
-                    it.anyHost();
-                });
-            });
-        });
+        AppConfig appConfig = new AppConfig();
+        appConfig.start(PORT);
 
-        app.post("/receipts/process", receiptController::processReceipt);
-        app.get("/receipts/{id}/points", receiptController::getPoints);
-
-        app.exception(ApiException.class, (e, ctx) -> {
-            ctx.status(e.getStatusCode()).json(Map.of("error", e.getMessage()));
-        });
-
-        app.exception(ValidationException.class, (e, ctx) -> {
-            ctx.status(e.getStatusCode()).json(Map.of("error", e.getMessage()));
-        });
-
-        app.start(7070);
+        logger.info("Application started successfully on port {}", PORT);
     }
 }

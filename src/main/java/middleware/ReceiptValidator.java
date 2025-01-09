@@ -2,7 +2,7 @@ package middleware;
 
 import constants.RewardsRules;
 import dto.ReceiptDTO;
-import exceptions.ValidationException;
+import exceptions.BadRequestException;
 import org.slf4j.Logger;
 import utils.LoggerUtil;
 
@@ -22,7 +22,7 @@ public class ReceiptValidator {
 
         if (!errors.isEmpty()) {
             logger.error("Validation failed. Your receipt is invalid, please try again.");
-            throw new ValidationException("Validation failed: " + String.join(", ", errors), 403);
+            throw new BadRequestException("Validation failed: " + String.join(", ", errors));
         }
     }
 

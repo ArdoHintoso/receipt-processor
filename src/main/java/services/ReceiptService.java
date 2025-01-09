@@ -4,6 +4,7 @@ import dto.ReceiptDTO;
 import exceptions.ApiException;
 import domain.Receipt;
 import middleware.ReceiptMapper;
+import middleware.ReceiptValidator;
 import org.slf4j.Logger;
 import utils.LoggerUtil;
 import utils.PointsCalculator;
@@ -16,10 +17,12 @@ public class ReceiptService {
     private static final Logger logger = LoggerUtil.getLogger(ReceiptService.class);
     private final Map<String, Receipt> receipts = new ConcurrentHashMap<>();
     private final Map<String, Integer> rewards = new ConcurrentHashMap<>();
+    private final ReceiptValidator validator;
     private final PointsCalculator pointsCalculator;
     private final ReceiptMapper mapper;
 
-    public ReceiptService(PointsCalculator pointsCalculator, ReceiptMapper mapper) {
+    public ReceiptService(ReceiptValidator validator, PointsCalculator pointsCalculator, ReceiptMapper mapper) {
+        this.validator = validator;
         this.pointsCalculator = pointsCalculator;
         this.mapper = mapper;
     }
@@ -28,7 +31,7 @@ public class ReceiptService {
         logger.info("Processing new receipt...");
         logger.debug("Receipt data: {}", receiptDTO);
 
-        validateReceipt(receiptDTO);
+        validator.validateReceiptDTO(receiptDTO);
         logger.debug("DTO validation passed");
 
         String id = UUID.randomUUID().toString();
@@ -51,15 +54,5 @@ public class ReceiptService {
         }
 
         return rewards.get(id);
-    }
-
-    private void validateReceipt(ReceiptDTO receipt) {
-        if (receipt == null) {
-            throw new ApiException("The receipt is invalid.", 400);
-        }
-
-        if (receipt.retailer() == null || receipt.retailer().trim().isEmpty()) {
-            throw new ApiException("The receipt is invalid.", 400);
-        }
     }
 }

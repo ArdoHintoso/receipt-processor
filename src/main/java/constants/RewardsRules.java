@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 public class RewardsRules {
     public static final int MIN_ITEMS = 1;
     public static final double MIN_TOTAL = 0.0;
+    public static final double MIN_ITEM_PRICE = 0.0;
     public static final int POINTS_PER_ALPHANUMERIC = 1;
     public static final int POINTS_FOR_ROUND_DOLLAR = 50;
     public static final int POINTS_FOR_MULTIPLE_OF_25_CENTS = 25;

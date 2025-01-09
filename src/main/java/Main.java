@@ -3,6 +3,7 @@ import exceptions.ApiException;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import middleware.ReceiptMapper;
+import middleware.ReceiptValidator;
 import utils.PointsCalculator;
 import services.ReceiptService;
 
@@ -10,7 +11,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-        ReceiptController receiptController = new ReceiptController(new ReceiptService(new PointsCalculator(), new ReceiptMapper()));
+        ReceiptController receiptController = new ReceiptController(new ReceiptService(new ReceiptValidator(), new PointsCalculator(), new ReceiptMapper()));
 
         Javalin app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson());

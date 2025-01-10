@@ -111,7 +111,7 @@ docker rmi $(docker images -q)
 ```
 
 ## **3. API Documentation**
-The API documentation is available at [Swagger UI](http://localhost:7000/swagger/) once the application is up and running.
+The API documentation is available at [Swagger UI](http://localhost:7070/swagger/) once the application is up and running.
 
 ### Endpoints
 

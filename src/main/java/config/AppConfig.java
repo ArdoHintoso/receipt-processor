@@ -1,10 +1,12 @@
 package config;
 
+import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
+import io.javalin.openapi.plugin.OpenApiPlugin;
+import io.javalin.openapi.plugin.swagger.SwaggerPlugin;
 import controllers.ReceiptController;
 import exceptions.BadRequestException;
 import exceptions.NotFoundException;
-import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson;
 import middleware.ReceiptMapper;
 import middleware.ReceiptValidator;
 import repository.ReceiptRepository;
@@ -29,6 +31,12 @@ public class AppConfig {
         // configure Javalin:
         this.app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson());
+            config.registerPlugin(new OpenApiPlugin(pluginConfig -> {
+                pluginConfig.withDefinitionConfiguration((version, definition) -> {
+                    definition.withOpenApiInfo(info -> info.setTitle("Fetch Rewards Challenge: Receipt Processor v1.0.0"));
+                });
+            }));
+            config.registerPlugin(new SwaggerPlugin());
         });
 
         configureExceptionHandler();

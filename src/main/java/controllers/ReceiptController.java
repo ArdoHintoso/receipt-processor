@@ -1,5 +1,6 @@
 package controllers;
 
+import domain.Receipt;
 import dto.IdResponseDTO;
 import dto.PointsResponseDTO;
 import dto.ReceiptDTO;
@@ -7,6 +8,10 @@ import exceptions.BadRequestException;
 import exceptions.NotFoundException;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.openapi.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.slf4j.Logger;
 import services.ReceiptService;
 import utils.LoggerUtil;
@@ -21,6 +26,29 @@ public class ReceiptController {
         this.receiptService = receiptService;
     }
 
+    @OpenApi(
+            path = "/receipts/process",
+            methods = HttpMethod.POST,
+            tags = {"Receipts"},
+            summary = "Submits a receipt for processing.",
+            description = "Submits a receipt for processing.",
+            requestBody = @OpenApiRequestBody(
+                    required = true,
+                    content = @OpenApiContent(from = ReceiptDTO.class),
+                    description = "The receipt to process"
+            ),
+            responses = {
+                    @OpenApiResponse(
+                            status = "200",
+                            content = {@OpenApiContent(from = IdResponseDTO[].class)},
+                            description = "Returns the ID assigned to the receipt"
+                    ),
+                    @OpenApiResponse(
+                            status = "400",
+                            description = "The receipt is invalid"
+                    )
+            }
+    )
     public void processReceipt(Context ctx) {
         try {
             logger.info("Received receipt process request");
@@ -37,6 +65,32 @@ public class ReceiptController {
         }
     }
 
+    @OpenApi(
+            path = "/receipts/{id}/points",
+            methods = HttpMethod.GET,
+            tags = {"Receipts"},
+            summary = "Returns the points awarded for the receipt.",
+            description = "Returns the points awarded for the receipt.",
+            pathParams = {
+                    @OpenApiParam(
+                            name = "id",
+                            description = "The ID of the receipt",
+                            required = true,
+                            type = String.class
+                    )
+            },
+            responses = {
+                    @OpenApiResponse(
+                            status = "200",
+                            content = {@OpenApiContent(from = PointsResponseDTO[].class)},
+                            description = "The number of points awarded"
+                    ),
+                    @OpenApiResponse(
+                            status = "404",
+                            description = "No receipt found for that ID"
+                    )
+            }
+    )
     public void getPoints(Context ctx) {
         try {
             String id = ctx.pathParam("id");

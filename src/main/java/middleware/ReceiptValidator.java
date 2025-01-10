@@ -66,6 +66,9 @@ public class ReceiptValidator {
         } else if (!dto.total().matches("^\\d+\\.\\d{2}$")) {
             errors.add("Invalid total format. Expected format: 0.00");
             return ;
+        } else if (Double.parseDouble(dto.total()) <= RewardsRules.MIN_TOTAL) {
+            errors.add("Total cannot be negative or zero");
+            return ;
         }
 
         List<ReceiptDTO.ItemDTO> items = dto.items();
@@ -102,8 +105,8 @@ public class ReceiptValidator {
         } else {
             try {
                 double price = Double.parseDouble(item.price());
-                if (price < RewardsRules.MIN_ITEM_PRICE) {
-                    errors.add("Item " + (index + 1) + ": Price cannot be negative");
+                if (price <= RewardsRules.MIN_ITEM_PRICE) {
+                    errors.add("Item " + (index + 1) + ": Price cannot be negative or zero");
                 }
             } catch (NumberFormatException e) {
                 errors.add("Item " + (index + 1) + ": Invalid price format");

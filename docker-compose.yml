@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  fetch-rewards-challenge:
+    build: .
+    ports:
+      - "7070:7070"
+    environment:
+      - JAVA_OPTS=-Xmx512m
